@@ -136,6 +136,7 @@ struct ProfileView: View {
                     .disabled(viewModel.isLoading)
                 }
             }
+            .scrollDismissesKeyboard(.interactively)
             .navigationTitle("Profile & CV")
             .fileImporter(
                 isPresented: $isDocumentPickerPresented,

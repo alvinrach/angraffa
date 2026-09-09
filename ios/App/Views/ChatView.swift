@@ -19,6 +19,10 @@ struct ChatView: View {
                         .padding(.horizontal, 16)
                         .padding(.vertical, 12)
                     }
+                    .scrollDismissesKeyboard(.interactively)
+                    .onTapGesture {
+                        isInputFocused = false
+                    }
                     .onChange(of: viewModel.messages.count) { _ in
                         if let last = viewModel.messages.last {
                             withAnimation {
