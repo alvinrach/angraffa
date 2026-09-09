@@ -10,16 +10,36 @@
 		007718C71ABB68812CD959B9 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159AD1A7FF4ABE777B298C31 /* ChatView.swift */; };
 		41F0DB9DC28BC802B16DBD0C /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A950263F392BFDB410AD5EB3 /* ChatViewModel.swift */; };
 		6DF1FABE761CDDFFD9813A73 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A673FBDB769B14A1BEAF2E2 /* ChatMessage.swift */; };
+		7F966FC483755900EAAEC62D /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D87B6964471051F1E01D8B2 /* Profile.swift */; };
+		92FF187C0916884A2DC8880E /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B39AC849A9181DD64837CB8 /* ProfileViewModel.swift */; };
+		A2438251A1105E9C03575794 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588A4B5AB1026262056B6D8 /* ProfileView.swift */; };
+		AEF2ABDBE65491A18110EF43 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = C712EFBC3369AADF8F88AD65 /* Supabase */; };
 		D3EE05B965A82D28C79CEB79 /* JobAgentApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BBFB845E373B776198FAEAF /* JobAgentApp.swift */; };
+		E26BC10A1A813A945EBF0A25 /* SupabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8999BC56B010F6D46949EC /* SupabaseService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		159AD1A7FF4ABE777B298C31 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		4A673FBDB769B14A1BEAF2E2 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
-		60AEB0DF980EB8E11EC856E9 /* JobAgentApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = JobAgentApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4D87B6964471051F1E01D8B2 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		60AEB0DF980EB8E11EC856E9 /* JobAgent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JobAgent.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		6B39AC849A9181DD64837CB8 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		6BBFB845E373B776198FAEAF /* JobAgentApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobAgentApp.swift; sourceTree = "<group>"; };
 		A950263F392BFDB410AD5EB3 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		CB8999BC56B010F6D46949EC /* SupabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseService.swift; sourceTree = "<group>"; };
+		F588A4B5AB1026262056B6D8 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D5DDD20D3E421762DBE68BF9 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AEF2ABDBE65491A18110EF43 /* Supabase in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		0BE9DA1986A0D5E47E5CC1BC /* App */ = {
@@ -27,6 +47,7 @@
 			children = (
 				6BBFB845E373B776198FAEAF /* JobAgentApp.swift */,
 				607BC12E0D7E5EA6E2AFEEAD /* Models */,
+				24F4EDEC5D6011674DD84329 /* Services */,
 				1B8938F8A87AF3932939D277 /* ViewModels */,
 				55732F1084747A6242DCD170 /* Views */,
 			);
@@ -37,14 +58,24 @@
 			isa = PBXGroup;
 			children = (
 				A950263F392BFDB410AD5EB3 /* ChatViewModel.swift */,
+				6B39AC849A9181DD64837CB8 /* ProfileViewModel.swift */,
 			);
 			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		24F4EDEC5D6011674DD84329 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				CB8999BC56B010F6D46949EC /* SupabaseService.swift */,
+			);
+			path = Services;
 			sourceTree = "<group>";
 		};
 		55732F1084747A6242DCD170 /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				159AD1A7FF4ABE777B298C31 /* ChatView.swift */,
+				F588A4B5AB1026262056B6D8 /* ProfileView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -53,6 +84,7 @@
 			isa = PBXGroup;
 			children = (
 				4A673FBDB769B14A1BEAF2E2 /* ChatMessage.swift */,
+				4D87B6964471051F1E01D8B2 /* Profile.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -68,7 +100,7 @@
 		CF4D5EE261CBE5736442F02F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				60AEB0DF980EB8E11EC856E9 /* JobAgentApp.app */,
+				60AEB0DF980EB8E11EC856E9 /* JobAgent.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -81,6 +113,7 @@
 			buildConfigurationList = E761633F6D348D9D08101BC7 /* Build configuration list for PBXNativeTarget "JobAgentApp" */;
 			buildPhases = (
 				5F52E0AAADF2C06711D779B5 /* Sources */,
+				D5DDD20D3E421762DBE68BF9 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -88,9 +121,10 @@
 			);
 			name = JobAgentApp;
 			packageProductDependencies = (
+				C712EFBC3369AADF8F88AD65 /* Supabase */,
 			);
 			productName = JobAgentApp;
-			productReference = 60AEB0DF980EB8E11EC856E9 /* JobAgentApp.app */;
+			productReference = 60AEB0DF980EB8E11EC856E9 /* JobAgent.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -103,7 +137,6 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					D10F4D0FE4AECAD517DE4EA4 = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -117,6 +150,9 @@
 			);
 			mainGroup = BC37CBDB3A800EFB26673C36;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				A44D3C3506C7995829ABDEC0 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CF4D5EE261CBE5736442F02F /* Products */;
 			projectDirPath = "";
@@ -136,6 +172,10 @@
 				007718C71ABB68812CD959B9 /* ChatView.swift in Sources */,
 				41F0DB9DC28BC802B16DBD0C /* ChatViewModel.swift in Sources */,
 				D3EE05B965A82D28C79CEB79 /* JobAgentApp.swift in Sources */,
+				7F966FC483755900EAAEC62D /* Profile.swift in Sources */,
+				A2438251A1105E9C03575794 /* ProfileView.swift in Sources */,
+				92FF187C0916884A2DC8880E /* ProfileViewModel.swift in Sources */,
+				E26BC10A1A813A945EBF0A25 /* SupabaseService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -148,7 +188,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 7R585JKNMJ;
+				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Job Agent";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -169,7 +210,8 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 7R585JKNMJ;
+				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Job Agent";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -325,6 +367,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		A44D3C3506C7995829ABDEC0 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C712EFBC3369AADF8F88AD65 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A44D3C3506C7995829ABDEC0 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D72AD362661F70E0E60A6C91 /* Project object */;
 }
