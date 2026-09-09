@@ -1,0 +1,20 @@
+name: JobAgentApp
+options:
+  bundleIdPrefix: com.personal.jobagent
+  deploymentTarget:
+    iOS: 17.0
+targets:
+  JobAgentApp:
+    type: application
+    platform: iOS
+    sources:
+      - path: App
+    settings:
+      base:
+        PRODUCT_NAME: JobAgent
+        PRODUCT_BUNDLE_IDENTIFIER: com.personal.jobagent.app
+        SWIFT_VERSION: "5.0"
+        DEVELOPMENT_TEAM: "" # Xcode will auto-fill with your Personal Team
+        CODE_SIGN_STYLE: Automatic
+        INFOPLIST_KEY_CFBundleDisplayName: "Job Agent"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait"

@@ -1,0 +1,116 @@
+# ==========================================
+# OS & System Files
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==========================================
+# Secrets & Environment Variables (NEVER COMMIT)
+# ==========================================
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+*.p8
+*.p12
+*.mobileprovision
+
+# ==========================================
+# iOS / Xcode / Swift
+# ==========================================
+## User-specific Xcode state
+*.xcuserstate
+project.xcworkspace/xcuserdata/
+*.xcuserdatad
+xcuserdata/
+
+## Build & DerivedData
+build/
+DerivedData/
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Swift Package Manager
+.build/
+.swiftpm/xcode/package.resolved
+.swiftpm/configuration/
+
+## Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# ==========================================
+# Backend / Python
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+## Virtual Environments
+.env/
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+## Playwright & Testing
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ==========================================
+# Android (Future)
+# ==========================================
+android/.gradle/
+android/build/
+android/*/build/
+android/local.properties
+android/.idea/
+*.apk
+*.aab
+
+# ==========================================
+# IDEs & Editors
+# ==========================================
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.swp
+*~
