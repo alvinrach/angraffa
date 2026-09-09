@@ -114,6 +114,7 @@ struct ProfileView: View {
                 // Save Action
                 Section {
                     Button(action: {
+                        hideKeyboard()
                         Task {
                             await viewModel.saveProfile()
                         }
@@ -137,6 +138,17 @@ struct ProfileView: View {
                 }
             }
             .scrollDismissesKeyboard(.interactively)
+            .onTapGesture {
+                hideKeyboard()
+            }
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Done") {
+                        hideKeyboard()
+                    }
+                }
+            }
             .navigationTitle("Profile & CV")
             .fileImporter(
                 isPresented: $isDocumentPickerPresented,
@@ -159,6 +171,14 @@ struct ProfileView: View {
     }
 }
 
+// Helper extension to dismiss keyboard globally
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    }
+}
+
 #Preview {
     ProfileView()
 }
+
