@@ -8,7 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		007718C71ABB68812CD959B9 /* ChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 159AD1A7FF4ABE777B298C31 /* ChatView.swift */; };
+		053F2A4F3AA5FCFC2D447B11 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B230EE9F5C0F09AECB43A7EA /* AuthViewModel.swift */; };
 		41F0DB9DC28BC802B16DBD0C /* ChatViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A950263F392BFDB410AD5EB3 /* ChatViewModel.swift */; };
+		55CFD202083AC5AE08BFFB21 /* ViewExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F05C75CB28137FE178D4598B /* ViewExtensions.swift */; };
 		6DF1FABE761CDDFFD9813A73 /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A673FBDB769B14A1BEAF2E2 /* ChatMessage.swift */; };
 		7F966FC483755900EAAEC62D /* Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D87B6964471051F1E01D8B2 /* Profile.swift */; };
 		92FF187C0916884A2DC8880E /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B39AC849A9181DD64837CB8 /* ProfileViewModel.swift */; };
@@ -16,17 +18,21 @@
 		AEF2ABDBE65491A18110EF43 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = C712EFBC3369AADF8F88AD65 /* Supabase */; };
 		D3EE05B965A82D28C79CEB79 /* JobAgentApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BBFB845E373B776198FAEAF /* JobAgentApp.swift */; };
 		E26BC10A1A813A945EBF0A25 /* SupabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8999BC56B010F6D46949EC /* SupabaseService.swift */; };
+		FD2AE4404F1E52746D56F159 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D196F9860C078CCB76FABCE2 /* AuthView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		159AD1A7FF4ABE777B298C31 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		4A673FBDB769B14A1BEAF2E2 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		4D87B6964471051F1E01D8B2 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
-		60AEB0DF980EB8E11EC856E9 /* JobAgent.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = JobAgent.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		60AEB0DF980EB8E11EC856E9 /* JobAgentApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = JobAgentApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B39AC849A9181DD64837CB8 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		6BBFB845E373B776198FAEAF /* JobAgentApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobAgentApp.swift; sourceTree = "<group>"; };
 		A950263F392BFDB410AD5EB3 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		B230EE9F5C0F09AECB43A7EA /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		CB8999BC56B010F6D46949EC /* SupabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseService.swift; sourceTree = "<group>"; };
+		D196F9860C078CCB76FABCE2 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		F05C75CB28137FE178D4598B /* ViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtensions.swift; sourceTree = "<group>"; };
 		F588A4B5AB1026262056B6D8 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -46,6 +52,7 @@
 			isa = PBXGroup;
 			children = (
 				6BBFB845E373B776198FAEAF /* JobAgentApp.swift */,
+				DDC0BA706BEE374460AFB1CB /* Extensions */,
 				607BC12E0D7E5EA6E2AFEEAD /* Models */,
 				24F4EDEC5D6011674DD84329 /* Services */,
 				1B8938F8A87AF3932939D277 /* ViewModels */,
@@ -57,6 +64,7 @@
 		1B8938F8A87AF3932939D277 /* ViewModels */ = {
 			isa = PBXGroup;
 			children = (
+				B230EE9F5C0F09AECB43A7EA /* AuthViewModel.swift */,
 				A950263F392BFDB410AD5EB3 /* ChatViewModel.swift */,
 				6B39AC849A9181DD64837CB8 /* ProfileViewModel.swift */,
 			);
@@ -74,6 +82,7 @@
 		55732F1084747A6242DCD170 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				D196F9860C078CCB76FABCE2 /* AuthView.swift */,
 				159AD1A7FF4ABE777B298C31 /* ChatView.swift */,
 				F588A4B5AB1026262056B6D8 /* ProfileView.swift */,
 			);
@@ -100,9 +109,17 @@
 		CF4D5EE261CBE5736442F02F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				60AEB0DF980EB8E11EC856E9 /* JobAgent.app */,
+				60AEB0DF980EB8E11EC856E9 /* JobAgentApp.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		DDC0BA706BEE374460AFB1CB /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				F05C75CB28137FE178D4598B /* ViewExtensions.swift */,
+			);
+			path = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -124,7 +141,7 @@
 				C712EFBC3369AADF8F88AD65 /* Supabase */,
 			);
 			productName = JobAgentApp;
-			productReference = 60AEB0DF980EB8E11EC856E9 /* JobAgent.app */;
+			productReference = 60AEB0DF980EB8E11EC856E9 /* JobAgentApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -137,6 +154,7 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					D10F4D0FE4AECAD517DE4EA4 = {
+						DevelopmentTeam = 7R585JKNMJ;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -168,6 +186,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FD2AE4404F1E52746D56F159 /* AuthView.swift in Sources */,
+				053F2A4F3AA5FCFC2D447B11 /* AuthViewModel.swift in Sources */,
 				6DF1FABE761CDDFFD9813A73 /* ChatMessage.swift in Sources */,
 				007718C71ABB68812CD959B9 /* ChatView.swift in Sources */,
 				41F0DB9DC28BC802B16DBD0C /* ChatViewModel.swift in Sources */,
@@ -176,6 +196,7 @@
 				A2438251A1105E9C03575794 /* ProfileView.swift in Sources */,
 				92FF187C0916884A2DC8880E /* ProfileViewModel.swift in Sources */,
 				E26BC10A1A813A945EBF0A25 /* SupabaseService.swift in Sources */,
+				55CFD202083AC5AE08BFFB21 /* ViewExtensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

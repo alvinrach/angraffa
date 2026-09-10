@@ -23,7 +23,9 @@ targets:
         PRODUCT_NAME: JobAgent
         PRODUCT_BUNDLE_IDENTIFIER: com.personal.jobagent.app
         SWIFT_VERSION: "5.0"
-        DEVELOPMENT_TEAM: "" # Xcode will auto-fill with your Personal Team
+        DEVELOPMENT_TEAM: "7R585JKNMJ"
         CODE_SIGN_STYLE: Automatic
+        GENERATE_INFOPLIST_FILE: YES
+        INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_CFBundleDisplayName: "Job Agent"
         INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait"

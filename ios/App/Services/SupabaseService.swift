@@ -8,7 +8,6 @@ class SupabaseService {
 
     private init() {
         let supabaseURL = URL(string: "https://ihfdrxfkkcgfnxrlgpuj.supabase.co")!
-        // Anon key for client-side queries
         let supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImloZmRyeGZra2NnZm54cmxncHVqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg5NDQxMTAsImV4cCI6MjEwNDUyMDExMH0.xas4Z7YNcbq4fOniYZKB0PsOeE7CMha03vPUmU3NMvM"
 
         self.client = SupabaseClient(
@@ -17,18 +16,55 @@ class SupabaseService {
         )
     }
 
+    // MARK: - Auth Operations
+
+    func sendOTP(email: String) async throws {
+        try await client.auth.signInWithOTP(
+            email: email,
+            redirectTo: nil,
+            shouldCreateUser: true
+        )
+    }
+
+    func verifyOTP(email: String, token: String) async throws {
+        try await client.auth.verifyOTP(
+            email: email,
+            token: token,
+            type: .email
+        )
+    }
+
+    func getCurrentUser() async -> User? {
+        return try? await client.auth.session.user
+    }
+
+    func signOut() async throws {
+        try await client.auth.signOut()
+    }
+
     // MARK: - Profile Operations
 
-    func fetchLatestProfile() async throws -> Profile? {
+    func fetchCurrentProfile() async throws -> Profile? {
+        guard let user = try? await client.auth.session.user else {
+            return nil
+        }
+
         let profiles: [Profile] = try await client
             .from("profiles")
             .select()
-            .order("created_at", ascending: false)
+            .eq("id", value: user.id)
             .limit(1)
             .execute()
             .value
 
-        return profiles.first
+        if let existing = profiles.first {
+            return existing
+        }
+
+        // Initialize default empty profile if none exists
+        let newProfile = Profile(id: user.id, email: user.email ?? "")
+        try? await saveProfile(newProfile)
+        return newProfile
     }
 
     func saveProfile(_ profile: Profile) async throws {
@@ -41,9 +77,12 @@ class SupabaseService {
     // MARK: - Resume Storage Operations
 
     func uploadResume(fileData: Data, fileName: String) async throws -> String {
-        // Clean filename and create unique storage path
+        guard let user = try? await client.auth.session.user else {
+            throw NSError(domain: "SupabaseService", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])
+        }
+
         let sanitizedName = fileName.replacingOccurrences(of: " ", with: "_")
-        let storagePath = "resumes/\(UUID().uuidString)_\(sanitizedName)"
+        let storagePath = "\(user.id)/\(sanitizedName)"
 
         try await client.storage
             .from("resumes")

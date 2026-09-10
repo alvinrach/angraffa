@@ -6,10 +6,22 @@ struct ProfileView: View {
     @State private var isDocumentPickerPresented = false
     @State private var newQuestionKey = ""
     @State private var newQuestionValue = ""
+    var onSignOut: (() -> Void)? = nil
 
     var body: some View {
         NavigationStack {
             Form {
+                // Account Info Section
+                Section(header: Text("Account")) {
+                    HStack {
+                        Image(systemName: "person.crop.circle")
+                            .foregroundColor(.blue)
+                        Text(viewModel.email.isEmpty ? "Loading..." : viewModel.email)
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                    }
+                }
+
                 // Status / Banner
                 if let status = viewModel.statusMessage {
                     Section {
@@ -30,35 +42,49 @@ struct ProfileView: View {
                                 .font(.body)
                                 .foregroundColor(viewModel.resumeFileName.isEmpty ? .secondary : .primary)
                             if !viewModel.resumeFileName.isEmpty {
-                                Text("Uploaded to Supabase Storage")
+                                Text("Stored securely in your Supabase account")
                                     .font(.caption)
                                     .foregroundColor(.green)
                             }
                         }
                         Spacer()
                         Button(action: {
+                            hideKeyboard()
                             isDocumentPickerPresented = true
                         }) {
                             if viewModel.isUploadingResume {
                                 ProgressView()
                             } else {
                                 Label("Upload PDF", systemImage: "arrow.up.doc")
+                                    .fontWeight(.medium)
                             }
                         }
+                        .buttonStyle(.borderedProminent)
                         .disabled(viewModel.isUploadingResume)
                     }
                 }
 
-                // Contact & Basic Info
-                Section(header: Text("Contact Information")) {
-                    TextField("Full Name", text: $viewModel.fullName)
-                    TextField("Email", text: $viewModel.email)
-                        .textContentType(.emailAddress)
-                        .keyboardType(.emailAddress)
-                        .autocapitalization(.none)
-                    TextField("Phone Number", text: $viewModel.phone)
-                        .textContentType(.telephoneNumber)
-                        .keyboardType(.phonePad)
+                // Name Details (Split for ATS systems)
+                Section(header: Text("Name Details")) {
+                    TextField("First Name (e.g. Alvin)", text: $viewModel.firstName)
+                    TextField("Last Name (e.g. Rachmat)", text: $viewModel.lastName)
+                }
+
+                // Contact & Location
+                Section(header: Text("Location & Phone")) {
+                    TextField("City (e.g. Jakarta / Dubai)", text: $viewModel.city)
+                    TextField("Country (e.g. Indonesia / UAE)", text: $viewModel.country)
+
+                    HStack(spacing: 8) {
+                        TextField("+62", text: $viewModel.phoneCountryCode)
+                            .frame(width: 60)
+                            .keyboardType(.phonePad)
+                            .textFieldStyle(.roundedBorder)
+
+                        TextField("Phone Number (e.g. 85214888118)", text: $viewModel.phoneNumber)
+                            .textContentType(.telephoneNumber)
+                            .keyboardType(.phonePad)
+                    }
                 }
 
                 // Online Profiles
@@ -67,6 +93,9 @@ struct ProfileView: View {
                         .keyboardType(.URL)
                         .autocapitalization(.none)
                     TextField("GitHub URL", text: $viewModel.githubURL)
+                        .keyboardType(.URL)
+                        .autocapitalization(.none)
+                    TextField("Portfolio / Website URL", text: $viewModel.portfolioURL)
                         .keyboardType(.URL)
                         .autocapitalization(.none)
                 }
@@ -136,11 +165,23 @@ struct ProfileView: View {
                     }
                     .disabled(viewModel.isLoading)
                 }
+
+                // Sign Out
+                Section {
+                    Button(role: .destructive, action: {
+                        if let onSignOut = onSignOut {
+                            onSignOut()
+                        }
+                    }) {
+                        HStack {
+                            Spacer()
+                            Text("Sign Out")
+                            Spacer()
+                        }
+                    }
+                }
             }
             .scrollDismissesKeyboard(.interactively)
-            .onTapGesture {
-                hideKeyboard()
-            }
             .toolbar {
                 ToolbarItemGroup(placement: .keyboard) {
                     Spacer()
@@ -163,22 +204,18 @@ struct ProfileView: View {
                         }
                     }
                 case .failure(let error):
-                    viewModel.statusMessage = "Picker error: \(error.localizedDescription)"
-                    viewModel.isErrorMessage = true
+                    let nsError = error as NSError
+                    // Ignore user cancelling the picker (code 3072 / NSUserCancelledError)
+                    if nsError.domain != NSCocoaErrorDomain || nsError.code != 3072 {
+                        viewModel.statusMessage = "Picker error: \(error.localizedDescription)"
+                        viewModel.isErrorMessage = true
+                    }
                 }
             }
         }
     }
 }
 
-// Helper extension to dismiss keyboard globally
-extension View {
-    func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
-}
-
 #Preview {
     ProfileView()
 }
-
