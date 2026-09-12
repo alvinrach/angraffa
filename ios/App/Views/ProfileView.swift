@@ -1,14 +1,21 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-struct ProfileView: View {
+public struct ProfileView: View {
     @StateObject private var viewModel = ProfileViewModel()
     @State private var isDocumentPickerPresented = false
+    @State private var isExperienceSheetPresented = false
+    @State private var selectedExperience: Experience? = nil
+    
     @State private var newQuestionKey = ""
     @State private var newQuestionValue = ""
-    var onSignOut: (() -> Void)? = nil
+    public var onSignOut: (() -> Void)? = nil
 
-    var body: some View {
+    public init(onSignOut: (() -> Void)? = nil) {
+        self.onSignOut = onSignOut
+    }
+
+    public var body: some View {
         NavigationStack {
             Form {
                 // Account Info Section
@@ -57,6 +64,7 @@ struct ProfileView: View {
                             } else {
                                 Label("Upload PDF", systemImage: "arrow.up.doc")
                                     .fontWeight(.medium)
+                                    .foregroundColor(.white)
                             }
                         }
                         .buttonStyle(.borderedProminent)
@@ -72,16 +80,16 @@ struct ProfileView: View {
 
                 // Contact & Location
                 Section(header: Text("Location & Phone")) {
-                    TextField("City (e.g. Jakarta / Dubai)", text: $viewModel.city)
-                    TextField("Country (e.g. Indonesia / UAE)", text: $viewModel.country)
+                    TextField("City (e.g. Abu Dhabi / Jakarta)", text: $viewModel.city)
+                    TextField("Country (e.g. UAE / Indonesia)", text: $viewModel.country)
 
                     HStack(spacing: 8) {
-                        TextField("+62", text: $viewModel.phoneCountryCode)
-                            .frame(width: 60)
+                        TextField("+971", text: $viewModel.phoneCountryCode)
+                            .frame(width: 65)
                             .keyboardType(.phonePad)
                             .textFieldStyle(.roundedBorder)
 
-                        TextField("Phone Number (e.g. 85214888118)", text: $viewModel.phoneNumber)
+                        TextField("Phone Number (e.g. 502140290)", text: $viewModel.phoneNumber)
                             .textContentType(.telephoneNumber)
                             .keyboardType(.phonePad)
                     }
@@ -100,11 +108,143 @@ struct ProfileView: View {
                         .autocapitalization(.none)
                 }
 
-                // Custom Q&A for ATS Forms
+                // Work Experiences Section
                 Section(
-                    header: Text("Custom Q&A Memory"),
-                    footer: Text("Common questions asked by job boards (e.g., Work Authorization, Salary Expectations, Notice Period).")
+                    header: HStack {
+                        Text("Work Experiences")
+                        Spacer()
+                        Button(action: {
+                            hideKeyboard()
+                            selectedExperience = nil
+                            isExperienceSheetPresented = true
+                        }) {
+                            Label("Add", systemImage: "plus")
+                                .font(.caption)
+                                .fontWeight(.semibold)
+                        }
+                    },
+                    footer: Text("Curate once in your phone; reused automatically for applications requiring explicit work history.")
                 ) {
+                    if viewModel.experiences.isEmpty {
+                        Text("No work experiences added yet.")
+                            .foregroundColor(.secondary)
+                            .font(.subheadline)
+                    } else {
+                        ForEach(viewModel.experiences) { exp in
+                            Button(action: {
+                                hideKeyboard()
+                                selectedExperience = exp
+                                isExperienceSheetPresented = true
+                            }) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    HStack {
+                                        Text(exp.title)
+                                            .font(.headline)
+                                            .foregroundColor(.primary)
+                                        Spacer()
+                                        Text(exp.isCurrent ? "\(exp.startDate) – Present" : "\(exp.startDate) – \(exp.endDate ?? "")")
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    HStack {
+                                        Text(exp.company)
+                                            .font(.subheadline)
+                                            .foregroundColor(.blue)
+                                        if let loc = exp.location, !loc.isEmpty {
+                                            Text("• \(loc)")
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                        }
+                                    }
+                                    if let desc = exp.description, !desc.isEmpty {
+                                        Text(desc)
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                            .lineLimit(2)
+                                    }
+                                }
+                                .padding(.vertical, 2)
+                            }
+                        }
+                        .onDelete { indexSet in
+                            viewModel.deleteExperience(at: indexSet)
+                        }
+                    }
+                }
+
+                // Default Screening Answers
+                Section(
+                    header: Text("Default Screening Q&A"),
+                    footer: Text("Auto-populates preliminary screening questions on portals like SmartRecruiters, Greenhouse, and Workday.")
+                ) {
+                    HStack {
+                        Text("Nationality")
+                            .font(.subheadline)
+                        Spacer()
+                        TextField("e.g. Indonesian", text: $viewModel.nationality)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    HStack {
+                        Text("Visa Status")
+                            .font(.subheadline)
+                        Spacer()
+                        TextField("e.g. Resident Visa", text: $viewModel.visaStatus)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    HStack {
+                        Text("Notice Period")
+                            .font(.subheadline)
+                        Spacer()
+                        TextField("e.g. 1 month", text: $viewModel.noticePeriod)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    HStack {
+                        Text("Earliest Start")
+                            .font(.subheadline)
+                        Spacer()
+                        TextField("e.g. Immediately", text: $viewModel.earliestStartDate)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    HStack {
+                        Text("Current Salary")
+                            .font(.subheadline)
+                        Spacer()
+                        TextField("e.g. AED 25,000", text: $viewModel.currentSalary)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    HStack {
+                        Text("Expected Salary")
+                            .font(.subheadline)
+                        Spacer()
+                        TextField("e.g. AED 30,000", text: $viewModel.expectedSalary)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    HStack {
+                        Text("Marital Status")
+                            .font(.subheadline)
+                        Spacer()
+                        TextField("e.g. Single / Married", text: $viewModel.maritalStatus)
+                            .multilineTextAlignment(.trailing)
+                    }
+                    HStack {
+                        Text("Gender")
+                            .font(.subheadline)
+                        Spacer()
+                        TextField("e.g. Male / Female", text: $viewModel.gender)
+                            .multilineTextAlignment(.trailing)
+                    }
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("Default Skillset Pitch / Summary")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                        TextEditor(text: $viewModel.skillsetPitch)
+                            .frame(minHeight: 80)
+                    }
+                }
+
+                // Custom Extra Q&A Builder
+                Section(header: Text("Custom Q&A Memory")) {
                     ForEach(viewModel.customAnswers.keys.sorted(), id: \.self) { key in
                         VStack(alignment: .leading, spacing: 4) {
                             Text(key)
@@ -123,9 +263,9 @@ struct ProfileView: View {
 
                     // Add new Q&A
                     VStack(spacing: 8) {
-                        TextField("Question / Topic (e.g. Visa Status)", text: $newQuestionKey)
+                        TextField("Question / Topic (e.g. Relatives in Company)", text: $newQuestionKey)
                             .textFieldStyle(.roundedBorder)
-                        TextField("Your Answer (e.g. Authorized to work)", text: $newQuestionValue)
+                        TextField("Your Answer (e.g. No)", text: $newQuestionValue)
                             .textFieldStyle(.roundedBorder)
                         Button(action: {
                             guard !newQuestionKey.isEmpty && !newQuestionValue.isEmpty else { return }
@@ -133,7 +273,7 @@ struct ProfileView: View {
                             newQuestionKey = ""
                             newQuestionValue = ""
                         }) {
-                            Label("Add Answer", systemImage: "plus.circle")
+                            Label("Add Custom Answer", systemImage: "plus.circle")
                         }
                         .disabled(newQuestionKey.isEmpty || newQuestionValue.isEmpty)
                     }
@@ -205,10 +345,21 @@ struct ProfileView: View {
                     }
                 case .failure(let error):
                     let nsError = error as NSError
-                    // Ignore user cancelling the picker (code 3072 / NSUserCancelledError)
                     if nsError.domain != NSCocoaErrorDomain || nsError.code != 3072 {
                         viewModel.statusMessage = "Picker error: \(error.localizedDescription)"
                         viewModel.isErrorMessage = true
+                    }
+                }
+            }
+            .sheet(isPresented: $isExperienceSheetPresented) {
+                ExperienceEditView(experience: selectedExperience) { exp in
+                    if selectedExperience != nil {
+                        viewModel.updateExperience(exp)
+                    } else {
+                        viewModel.addExperience(exp)
+                    }
+                    Task {
+                        await viewModel.saveProfile()
                     }
                 }
             }

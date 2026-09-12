@@ -16,8 +16,10 @@
 		92FF187C0916884A2DC8880E /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B39AC849A9181DD64837CB8 /* ProfileViewModel.swift */; };
 		A2438251A1105E9C03575794 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F588A4B5AB1026262056B6D8 /* ProfileView.swift */; };
 		AEF2ABDBE65491A18110EF43 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = C712EFBC3369AADF8F88AD65 /* Supabase */; };
+		B0599AC339811288F701756D /* ExperienceEditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF4DD9CC581EE07E30D8281 /* ExperienceEditView.swift */; };
 		D3EE05B965A82D28C79CEB79 /* JobAgentApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BBFB845E373B776198FAEAF /* JobAgentApp.swift */; };
 		E26BC10A1A813A945EBF0A25 /* SupabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB8999BC56B010F6D46949EC /* SupabaseService.swift */; };
+		E9C8E3EC147F01A7BF6B1DE6 /* Experience.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5B009470E0215D4FF58BE303 /* Experience.swift */; };
 		FD2AE4404F1E52746D56F159 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D196F9860C078CCB76FABCE2 /* AuthView.swift */; };
 /* End PBXBuildFile section */
 
@@ -25,10 +27,12 @@
 		159AD1A7FF4ABE777B298C31 /* ChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatView.swift; sourceTree = "<group>"; };
 		4A673FBDB769B14A1BEAF2E2 /* ChatMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessage.swift; sourceTree = "<group>"; };
 		4D87B6964471051F1E01D8B2 /* Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Profile.swift; sourceTree = "<group>"; };
+		5B009470E0215D4FF58BE303 /* Experience.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experience.swift; sourceTree = "<group>"; };
 		60AEB0DF980EB8E11EC856E9 /* JobAgentApp.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = JobAgentApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		6B39AC849A9181DD64837CB8 /* ProfileViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		6BBFB845E373B776198FAEAF /* JobAgentApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JobAgentApp.swift; sourceTree = "<group>"; };
 		A950263F392BFDB410AD5EB3 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
+		AFF4DD9CC581EE07E30D8281 /* ExperienceEditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExperienceEditView.swift; sourceTree = "<group>"; };
 		B230EE9F5C0F09AECB43A7EA /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		CB8999BC56B010F6D46949EC /* SupabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupabaseService.swift; sourceTree = "<group>"; };
 		D196F9860C078CCB76FABCE2 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
@@ -84,6 +88,7 @@
 			children = (
 				D196F9860C078CCB76FABCE2 /* AuthView.swift */,
 				159AD1A7FF4ABE777B298C31 /* ChatView.swift */,
+				AFF4DD9CC581EE07E30D8281 /* ExperienceEditView.swift */,
 				F588A4B5AB1026262056B6D8 /* ProfileView.swift */,
 			);
 			path = Views;
@@ -93,6 +98,7 @@
 			isa = PBXGroup;
 			children = (
 				4A673FBDB769B14A1BEAF2E2 /* ChatMessage.swift */,
+				5B009470E0215D4FF58BE303 /* Experience.swift */,
 				4D87B6964471051F1E01D8B2 /* Profile.swift */,
 			);
 			path = Models;
@@ -191,6 +197,8 @@
 				6DF1FABE761CDDFFD9813A73 /* ChatMessage.swift in Sources */,
 				007718C71ABB68812CD959B9 /* ChatView.swift in Sources */,
 				41F0DB9DC28BC802B16DBD0C /* ChatViewModel.swift in Sources */,
+				E9C8E3EC147F01A7BF6B1DE6 /* Experience.swift in Sources */,
+				B0599AC339811288F701756D /* ExperienceEditView.swift in Sources */,
 				D3EE05B965A82D28C79CEB79 /* JobAgentApp.swift in Sources */,
 				7F966FC483755900EAAEC62D /* Profile.swift in Sources */,
 				A2438251A1105E9C03575794 /* ProfileView.swift in Sources */,

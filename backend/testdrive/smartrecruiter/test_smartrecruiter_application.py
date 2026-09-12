@@ -187,75 +187,87 @@ def test_smartrecruiter_application():
                 print(f"  ⚠️ Radio {i+1} error: {e}")
 
         # ==========================================
+        # ==========================================
         # STEP 2: Textarea Pitch
         # ==========================================
         print("\n📝 Step 2: Filling skillset match pitch...")
+        answers = profile.get("answers_json") or {}
+        nationality = answers.get("nationality", "Indonesian")
+        visa_status = answers.get("visa_status", "Resident Visa")
+        marital_status = answers.get("marital_status", "Single")
+        reason_to_join = answers.get("reason_to_join", "Career growth - this role will be a step up for me")
+        notice_period = answers.get("notice_period", "1 month")
+        start_date = answers.get("start_date", answers.get("earliest_start_date", "01/10/2026"))
+        current_salary = answers.get("current_salary", "AED 25,000")
+        expected_salary = answers.get("expected_salary", "AED 30,000")
+        gender = answers.get("gender", "Male")
+        skillset_pitch = answers.get(
+            "skillset_pitch",
+            "Senior Data Scientist with 7+ years of experience in ML engineering, predictive modeling, and scalable real-time analytics aligned with talabat and Delivery Hero platforms."
+        )
+
         textareas = page.locator("textarea").all()
         if textareas:
-            pitch = (
-                "Senior Data Scientist with 7+ years of experience in ML engineering, predictive modeling, "
-                "and scalable real-time analytics aligned with talabat and Delivery Hero platforms."
-            )
             textareas[0].scroll_into_view_if_needed()
-            textareas[0].fill(pitch)
-            print(f"  ✅ Pitch filled ({len(pitch)} characters).")
+            textareas[0].fill(skillset_pitch)
+            print(f"  ✅ Pitch filled ({len(skillset_pitch)} characters).")
 
         # ==========================================
         # STEP 2: Text Inputs & Comboboxes by Exact Sequence
         # ==========================================
-        print("\n✍️ Step 2: Filling Screening Questions & Dropdowns...")
+        print("\n✍️ Step 2: Filling Screening Questions & Dropdowns from Profile Answers...")
         visible_text_inputs = [inp for inp in page.locator('input[type="text"]').all() if inp.is_visible()]
         print(f"  Found {len(visible_text_inputs)} visible text/combobox fields.")
 
         # Input [1]: Nationality
         if len(visible_text_inputs) > 1:
             visible_text_inputs[1].scroll_into_view_if_needed()
-            visible_text_inputs[1].fill("Indonesian")
-            print("  • [1] Nationality: Indonesian")
+            visible_text_inputs[1].fill(nationality)
+            print(f"  • [1] Nationality: {nationality}")
 
         # Input [2]: Visa status (Combobox)
         if len(visible_text_inputs) > 2:
-            print("  • [2] Selecting Visa status:")
-            select_combobox_option(page, visible_text_inputs[2], fallback_text="Resident Visa")
+            print(f"  • [2] Selecting Visa status ({visa_status}):")
+            select_combobox_option(page, visible_text_inputs[2], fallback_text=visa_status)
 
         # Input [3]: Marital status (Combobox)
         if len(visible_text_inputs) > 3:
-            print("  • [3] Selecting Marital status:")
-            select_combobox_option(page, visible_text_inputs[3], fallback_text="Single")
+            print(f"  • [3] Selecting Marital status ({marital_status}):")
+            select_combobox_option(page, visible_text_inputs[3], fallback_text=marital_status)
 
         # Input [4]: Reason to join (Combobox)
         if len(visible_text_inputs) > 4:
-            print("  • [4] Selecting Reason to join:")
-            select_combobox_option(page, visible_text_inputs[4], fallback_text="Culture")
+            print(f"  • [4] Selecting Reason to join ({reason_to_join}):")
+            select_combobox_option(page, visible_text_inputs[4], fallback_text=reason_to_join)
 
         # Input [5]: Notice Period
         if len(visible_text_inputs) > 5:
             visible_text_inputs[5].scroll_into_view_if_needed()
-            visible_text_inputs[5].fill("1 month")
-            print("  • [5] Notice period: 1 month")
+            visible_text_inputs[5].fill(notice_period)
+            print(f"  • [5] Notice period: {notice_period}")
 
         # Input [6]: Earliest Start Date
         if len(visible_text_inputs) > 6:
             visible_text_inputs[6].scroll_into_view_if_needed()
-            visible_text_inputs[6].fill("01/10/2026")
-            print("  • [6] Earliest start date: 01/10/2026")
+            visible_text_inputs[6].fill(start_date)
+            print(f"  • [6] Earliest start date: {start_date}")
 
         # Input [7]: Current Monthly Salary
         if len(visible_text_inputs) > 7:
             visible_text_inputs[7].scroll_into_view_if_needed()
-            visible_text_inputs[7].fill("AED 25,000")
-            print("  • [7] Current monthly salary: AED 25,000")
+            visible_text_inputs[7].fill(current_salary)
+            print(f"  • [7] Current monthly salary: {current_salary}")
 
         # Input [8]: Expected Monthly Salary
         if len(visible_text_inputs) > 8:
             visible_text_inputs[8].scroll_into_view_if_needed()
-            visible_text_inputs[8].fill("AED 30,000")
-            print("  • [8] Expected monthly salary: AED 30,000")
+            visible_text_inputs[8].fill(expected_salary)
+            print(f"  • [8] Expected monthly salary: {expected_salary}")
 
         # Input [9]: Gender (Combobox)
         if len(visible_text_inputs) > 9:
-            print("  • [9] Selecting Gender:")
-            select_combobox_option(page, visible_text_inputs[9], fallback_text="Male")
+            print(f"  • [9] Selecting Gender ({gender}):")
+            select_combobox_option(page, visible_text_inputs[9], fallback_text=gender)
 
         # ==========================================
         # STEP 2: Consent Checkbox

@@ -1,24 +1,25 @@
 import Foundation
 
-struct Profile: Identifiable, Codable {
-    var id: UUID
-    var email: String
-    var firstName: String?
-    var lastName: String?
-    var fullName: String?
-    var phoneCountryCode: String?
-    var phoneNumber: String?
-    var city: String?
-    var country: String?
-    var location: String?
-    var linkedinURL: String?
-    var githubURL: String?
-    var portfolioURL: String?
-    var resumePath: String?
-    var resumeFilename: String?
-    var answersJSON: [String: String]?
-    var createdAt: Date?
-    var updatedAt: Date?
+public struct Profile: Identifiable, Codable {
+    public var id: UUID
+    public var email: String
+    public var firstName: String?
+    public var lastName: String?
+    public var fullName: String?
+    public var phoneCountryCode: String?
+    public var phoneNumber: String?
+    public var city: String?
+    public var country: String?
+    public var location: String?
+    public var linkedinURL: String?
+    public var githubURL: String?
+    public var portfolioURL: String?
+    public var resumePath: String?
+    public var resumeFilename: String?
+    public var experiences: [Experience]?
+    public var answersJSON: [String: String]?
+    public var createdAt: Date?
+    public var updatedAt: Date?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -36,12 +37,13 @@ struct Profile: Identifiable, Codable {
         case portfolioURL = "portfolio_url"
         case resumePath = "resume_path"
         case resumeFilename = "resume_filename"
+        case experiences
         case answersJSON = "answers_json"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
     }
 
-    init(
+    public init(
         id: UUID = UUID(),
         email: String = "",
         firstName: String? = nil,
@@ -57,6 +59,7 @@ struct Profile: Identifiable, Codable {
         portfolioURL: String? = nil,
         resumePath: String? = nil,
         resumeFilename: String? = nil,
+        experiences: [Experience]? = nil,
         answersJSON: [String: String]? = nil,
         createdAt: Date? = nil,
         updatedAt: Date? = nil
@@ -76,6 +79,7 @@ struct Profile: Identifiable, Codable {
         self.portfolioURL = portfolioURL
         self.resumePath = resumePath
         self.resumeFilename = resumeFilename
+        self.experiences = experiences
         self.answersJSON = answersJSON
         self.createdAt = createdAt
         self.updatedAt = updatedAt
