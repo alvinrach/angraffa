@@ -1,33 +1,40 @@
 import Foundation
 
-enum MessageSender: String, Codable {
+public enum MessageSender: String, Codable {
     case user
     case agent
 }
 
-enum ApplicationStatus: String, Codable {
+public enum ApplicationStatus: String, Codable {
     case pending
     case fetching
     case filling
+    case reviewReady = "review_ready"
     case completed
     case failed
 }
 
-struct ChatMessage: Identifiable, Codable {
-    let id: UUID
-    let sender: MessageSender
-    let text: String
-    let timestamp: Date
-    var jobURL: URL?
-    var status: ApplicationStatus?
+public struct ChatMessage: Identifiable, Codable {
+    public let id: UUID
+    public let sender: MessageSender
+    public var text: String
+    public let timestamp: Date
+    public var jobURL: URL?
+    public var status: ApplicationStatus?
+    public var screenshotURL: URL?
+    public var liveLogs: [String]
+    public var applicationId: String?
 
-    init(
+    public init(
         id: UUID = UUID(),
         sender: MessageSender,
         text: String,
         timestamp: Date = Date(),
         jobURL: URL? = nil,
-        status: ApplicationStatus? = nil
+        status: ApplicationStatus? = nil,
+        screenshotURL: URL? = nil,
+        liveLogs: [String] = [],
+        applicationId: String? = nil
     ) {
         self.id = id
         self.sender = sender
@@ -35,5 +42,8 @@ struct ChatMessage: Identifiable, Codable {
         self.timestamp = timestamp
         self.jobURL = jobURL
         self.status = status
+        self.screenshotURL = screenshotURL
+        self.liveLogs = liveLogs
+        self.applicationId = applicationId
     }
 }

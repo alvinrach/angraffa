@@ -2,29 +2,26 @@ import Foundation
 import Combine
 
 @MainActor
-class ChatViewModel: ObservableObject {
-    @Published var messages: [ChatMessage] = []
-    @Published var inputText: String = ""
-    @Published var isProcessing: Bool = false
+public class ChatViewModel: ObservableObject {
+    @Published public var messages: [ChatMessage] = []
+    @Published public var inputText: String = ""
+    @Published public var isProcessing: Bool = false
 
-    init() {
-        // Welcome message
+    public init() {
         messages.append(
             ChatMessage(
                 sender: .agent,
-                text: "👋 Hi! Paste any job posting link here, and I'll extract the details and auto-fill the application for you."
+                text: "👋 Hi! Paste any SmartRecruiters or job posting link here, and I'll auto-fill and prepare the application for you."
             )
         )
     }
 
-    func sendMessage() {
+    public func sendMessage() {
         let trimmed = inputText.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
 
-        // Detect if the message contains a URL
         let detectedURL = extractURL(from: trimmed)
 
-        // Add user message
         let userMessage = ChatMessage(
             sender: .user,
             text: trimmed,
@@ -36,7 +33,6 @@ class ChatViewModel: ObservableObject {
         if let url = detectedURL {
             processJobLink(url: url)
         } else {
-            // General query response placeholder
             messages.append(
                 ChatMessage(
                     sender: .agent,
@@ -50,43 +46,73 @@ class ChatViewModel: ObservableObject {
         isProcessing = true
 
         let processingMsgId = UUID()
-        messages.append(
-            ChatMessage(
-                id: processingMsgId,
-                sender: .agent,
-                text: "🔍 Detected job link: \(url.host ?? url.absoluteString)\nFetching job application form...",
-                jobURL: url,
-                status: .fetching
-            )
+        let initialAgentMsg = ChatMessage(
+            id: processingMsgId,
+            sender: .agent,
+            text: "🚀 Detected job link: \(url.host ?? url.absoluteString)\nConnecting to backend automation engine...",
+            jobURL: url,
+            status: .fetching,
+            liveLogs: ["Connecting to automation backend..."]
         )
+        messages.append(initialAgentMsg)
 
-        // Simulate fetching & form filling (To be replaced with backend/agent API)
         Task {
-            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            let currentUser = await SupabaseService.shared.getCurrentUser()
+            let userIdString = currentUser?.id.uuidString
 
-            if let idx = messages.firstIndex(where: { $0.id == processingMsgId }) {
-                messages[idx] = ChatMessage(
-                    id: processingMsgId,
-                    sender: .agent,
-                    text: "📝 Form fetched! Filling fields (Name, Resume, Experience, Cover Letter)...",
+            do {
+                try await BackendAPIService.shared.streamJobApplication(
                     jobURL: url,
-                    status: .filling
-                )
+                    userId: userIdString
+                ) { [weak self] sse in
+                    guard let self = self else { return }
+                    guard let idx = self.messages.firstIndex(where: { $0.id == processingMsgId }) else { return }
+
+                    switch sse.event {
+                    case "log":
+                        if let logMsg = sse.data["message"] as? String {
+                            self.messages[idx].liveLogs.append(logMsg)
+                        }
+
+                    case "step":
+                        let stepName = sse.data["name"] as? String ?? ""
+                        let stepStatus = sse.data["status"] as? String ?? ""
+                        if stepStatus == "running" {
+                            self.messages[idx].status = .filling
+                        } else if stepStatus == "completed" && stepName == "screening_questions" {
+                            self.messages[idx].status = .reviewReady
+                        }
+
+                    case "screenshot":
+                        if let urlStr = sse.data["screenshot_url"] as? String, let screenURL = URL(string: urlStr) {
+                            self.messages[idx].screenshotURL = screenURL
+                        }
+
+                    case "completed":
+                        self.messages[idx].status = .completed
+                        self.messages[idx].text = "🎉 Application successfully auto-filled and prepared for:\n\(url.absoluteString)"
+                        if let urlStr = sse.data["screenshot_url"] as? String, let screenURL = URL(string: urlStr) {
+                            self.messages[idx].screenshotURL = screenURL
+                        }
+                        self.isProcessing = false
+
+                    case "error":
+                        self.messages[idx].status = .failed
+                        let errorMsg = sse.data["message"] as? String ?? "An error occurred during automation."
+                        self.messages[idx].text = "❌ Application failed: \(errorMsg)"
+                        self.isProcessing = false
+
+                    default:
+                        break
+                    }
+                }
+            } catch {
+                if let idx = self.messages.firstIndex(where: { $0.id == processingMsgId }) {
+                    self.messages[idx].status = .failed
+                    self.messages[idx].text = "❌ Connection failed: \(error.localizedDescription)\nEnsure backend server is running."
+                }
+                self.isProcessing = false
             }
-
-            try? await Task.sleep(nanoseconds: 2_000_000_000)
-
-            if let idx = messages.firstIndex(where: { $0.id == processingMsgId }) {
-                messages[idx] = ChatMessage(
-                    id: processingMsgId,
-                    sender: .agent,
-                    text: "✅ Application successfully prepared and submitted for:\n\(url.absoluteString)",
-                    jobURL: url,
-                    status: .completed
-                )
-            }
-
-            isProcessing = false
         }
     }
 

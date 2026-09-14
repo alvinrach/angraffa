@@ -9,6 +9,7 @@ public struct ProfileView: View {
     
     @State private var newQuestionKey = ""
     @State private var newQuestionValue = ""
+    @AppStorage("jobagent_backend_base_url") private var backendBaseURL: String = "http://172.18.11.32:8000"
     public var onSignOut: (() -> Void)? = nil
 
     public init(onSignOut: (() -> Void)? = nil) {
@@ -304,6 +305,18 @@ public struct ProfileView: View {
                         }
                     }
                     .disabled(viewModel.isLoading)
+                }
+
+                // Backend Server Connection
+                Section(header: Text("Backend Server Connection"), footer: Text("Set the IP/URL of your Mac running the FastAPI backend server (port 8000).")) {
+                    HStack {
+                        Image(systemName: "server.rack")
+                            .foregroundColor(.orange)
+                        TextField("http://172.18.11.32:8000", text: $backendBaseURL)
+                            .autocapitalization(.none)
+                            .disableAutocorrection(true)
+                            .keyboardType(.URL)
+                    }
                 }
 
                 // Sign Out
