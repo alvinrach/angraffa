@@ -81,3 +81,40 @@ since: 3a8a4a1c902e26b02d87d47ca71af9a982dcb48b
 
 since: 566973624e86b9cbf1656370d2b979cc7f9e3868
 
+## 2026-09-14: FastAPI SSE Backend, iOS Live Streaming & Storage RLS Fixes
+
+**Built**
+- `[me]` Experience model and editing modal (`Experience.swift`, `ExperienceEditView.swift`, and expanded `ProfileView.swift`) supporting multi-experience curation with job titles, companies, locations, date ranges, current employment toggles, and bullet descriptions.
+- `[me]` Default screening answers configuration UI in `ProfileView.swift` mapped to Supabase `answers_json` storage.
+- `[agent]` Dynamic profile data injection in Playwright runner (`smartrecruiter_service.py`), mapping database answers to form controls without hardcoded constants.
+- `[agent]` FastAPI backend service (`backend/app/main.py`) exposing `POST /api/apply` with Server-Sent Events (SSE) streaming via `asyncio` and `EventSourceResponse`.
+- `[agent]` Backend services (`smartrecruiter_service.py`, `supabase_service.py`) orchestrating Playwright automation, real-time log event streaming (`log`, `step`, `screenshot`, `completed`), Supabase CV download, screenshot upload, and application status persistence.
+- `[me]` iOS live event streaming client (`BackendAPIService.swift`, `ChatViewModel.swift`, `ChatView.swift`) using `URLSession.bytes` async sequences, rendering live terminal logs and visual verification cards.
+- `[forced]` iOS App Transport Security (`NSAllowsArbitraryLoads: YES`) and Local Network permissions (`NSLocalNetworkUsageDescription`) in `ios/project.yml`.
+- `[me]` Backend Server Connection settings field in `ProfileView.swift` with `@AppStorage` persistence for easy LAN IP configuration.
+- `[forced]` Supabase Postgres RLS policy fix for `storage.objects` and `profiles` enabling seamless `upsert: true` CV uploads.
+
+**Commits**
+- `d0e9bd2` feat: add project chronology documentation and create LangGraph ReAct agent plan
+- `779abe3` feat: add experience editing view and parameterize smartrecruiter test script with dynamic profile answers
+- `ddd550d` feat: implement FastAPI backend service and iOS client integration for job application streaming
+
+**Decisions**
+- Server Binding: Bound FastAPI to `0.0.0.0:8000` instead of `127.0.0.1` so physical iOS devices on the local Wi-Fi subnet can reach the host Mac.
+- Real-time Protocol: Used standard HTTP Server-Sent Events (SSE) via `URLSession.bytes` instead of WebSocket full-duplex connection, simplifying iOS reconnect logic, state management, and firewall traversal.
+- RLS Policy Architecture: Configured `storage.objects` policies for `resumes` and `screenshots` to comprehensive `FOR ALL` with explicit `WITH CHECK (bucket_id = ...)` to allow `upsert: true` without PostgreSQL constraint violations.
+- In-App Backend Configuration: Exposed the backend base URL directly in the iOS Profile settings backed by `@AppStorage` so device IP changes on dynamic DHCP networks can be updated immediately without recompiling.
+
+**Surprises**
+- `upsert: true` in `supabase-swift` Storage uploads triggered `new row violates row-level security policy` because Postgres RLS requires a matching `WITH CHECK` clause on `UPDATE` policies even when `INSERT` passes.
+- Physical iPhone silently failed to establish TCP connections to the local Mac IP until `NSLocalNetworkUsageDescription` was added to `Info.plist` and both devices were aligned on the same Wi-Fi SSID.
+- Initial uvicorn listener bound to `127.0.0.1` blocked external network packets arriving from the iPhone.
+
+**Open**
+- Multi-platform job portal expansion (Workday, Greenhouse, Lever).
+- Background task worker/queue if multiple applications are triggered simultaneously.
+- LangGraph ReAct agent integration (`plans/plan4-langgraph.md`) for ambiguous/unseen screening questions.
+
+since: ddd550dd59e8fac1935c9a06343f167c336eacef
+
+
