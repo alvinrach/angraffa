@@ -42,7 +42,8 @@ async def apply_to_job(payload: ApplyRequest):
     async def event_generator():
         async for item in run_smartrecruiter_application(
             job_url=payload.job_url,
-            user_id=payload.user_id
+            user_id=payload.user_id,
+            auto_submit=payload.auto_submit
         ):
             yield {
                 "event": item.get("event", "message"),

@@ -10,6 +10,7 @@ public struct ProfileView: View {
     @State private var newQuestionKey = ""
     @State private var newQuestionValue = ""
     @AppStorage("jobagent_backend_base_url") private var backendBaseURL: String = "http://172.18.11.32:8000"
+    @AppStorage("jobagent_auto_submit") private var autoSubmit: Bool = false
     public var onSignOut: (() -> Void)? = nil
 
     public init(onSignOut: (() -> Void)? = nil) {
@@ -305,6 +306,17 @@ public struct ProfileView: View {
                         }
                     }
                     .disabled(viewModel.isLoading)
+                }
+
+                // Automation Settings
+                Section(header: Text("Automation Settings"), footer: Text(autoSubmit ? "⚠️ Live Mode: The agent will fill all details and click Submit automatically." : "🛡️ Dry-Run Mode: The agent will fill all details and capture a full verification screenshot for your review without submitting.")) {
+                    Toggle(isOn: $autoSubmit) {
+                        HStack {
+                            Image(systemName: autoSubmit ? "paperplane.fill" : "eye.fill")
+                                .foregroundColor(autoSubmit ? .green : .blue)
+                            Text("Auto-Submit Applications")
+                        }
+                    }
                 }
 
                 // Backend Server Connection

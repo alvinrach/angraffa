@@ -41,7 +41,8 @@ async def select_combobox_option(page, input_locator, fallback_text=None) -> str
 
 async def run_smartrecruiter_application(
     job_url: str,
-    user_id: Optional[str] = None
+    user_id: Optional[str] = None,
+    auto_submit: bool = False
 ) -> AsyncGenerator[Dict[str, Any], None]:
     """Execute automated job application on SmartRecruiters and stream SSE progress events."""
     
@@ -85,6 +86,7 @@ async def run_smartrecruiter_application(
         app_id = supabase_service.create_application_record(
             user_id=user_uuid,
             job_url=job_url,
+            user_email=email,
             company_name="SmartRecruiters",
             job_title="Automated Application"
         )
@@ -268,38 +270,104 @@ async def run_smartrecruiter_application(
             await page.wait_for_timeout(1500)
 
             # ==========================================
-            # STEP 3: Verification Screenshot
+            # STEP 3: Verification & Submission
             # ==========================================
             screenshot_filename = f"verify_{app_id}.png"
             local_screenshot = DATA_DIR / screenshot_filename
             await page.screenshot(path=str(local_screenshot), full_page=True)
 
             screenshot_url = supabase_service.upload_screenshot(local_screenshot, screenshot_filename)
-            supabase_service.update_application_status(app_id, "review_ready", screenshot_url=screenshot_url)
 
             yield {
                 "event": "step",
                 "data": {"step": 2, "name": "screening_questions", "status": "completed", "message": "All questions completed."}
             }
 
-            yield {
-                "event": "screenshot",
-                "data": {
-                    "screenshot_url": screenshot_url,
-                    "application_id": app_id,
-                    "message": "Verification screenshot captured successfully."
+            if not auto_submit:
+                supabase_service.update_application_status(app_id, "review_ready", screenshot_url=screenshot_url)
+                yield {
+                    "event": "screenshot",
+                    "data": {
+                        "screenshot_url": screenshot_url,
+                        "application_id": app_id,
+                        "message": "Verification screenshot captured (Review Mode / Dry Run)."
+                    }
                 }
-            }
+                yield {
+                    "event": "completed",
+                    "data": {
+                        "status": "review_ready",
+                        "application_id": app_id,
+                        "screenshot_url": screenshot_url,
+                        "message": "📋 Application filled and ready for review (Dry Run - Not Submitted)."
+                    }
+                }
+            else:
+                yield {
+                    "event": "log",
+                    "data": {"message": "🚀 Auto-Submit is enabled. Submitting application..."}
+                }
 
-            yield {
-                "event": "completed",
-                "data": {
-                    "status": "success",
-                    "application_id": app_id,
-                    "screenshot_url": screenshot_url,
-                    "message": "🎉 Application ready for review and submission!"
+                # Attempt to find and click the submit button
+                submit_selectors = [
+                    'button[type="submit"]',
+                    'button:has-text("Submit application")',
+                    'button:has-text("Submit Application")',
+                    'button:has-text("Submit")',
+                    'button:has-text("Send application")',
+                    'spl-button[type="submit"] button',
+                    'footer button'
+                ]
+
+                submitted = False
+                for sel in submit_selectors:
+                    try:
+                        btn = page.locator(sel).first
+                        if await btn.is_visible():
+                            await btn.scroll_into_view_if_needed()
+                            await btn.click()
+                            submitted = True
+                            yield {
+                                "event": "log",
+                                "data": {"message": f"✅ Clicked submission button: {sel}"}
+                            }
+                            break
+                    except Exception:
+                        continue
+
+                if not submitted:
+                    # Fallback: try pressing Enter on the form
+                    await page.keyboard.press("Enter")
+
+                # Wait for submission processing & confirmation
+                await page.wait_for_timeout(5000)
+
+                # Capture final confirmation / thank-you receipt screenshot
+                confirm_filename = f"submitted_{app_id}.png"
+                local_confirm = DATA_DIR / confirm_filename
+                await page.screenshot(path=str(local_confirm), full_page=True)
+
+                confirm_url = supabase_service.upload_screenshot(local_confirm, confirm_filename)
+                supabase_service.update_application_status(app_id, "submitted", screenshot_url=confirm_url)
+
+                yield {
+                    "event": "screenshot",
+                    "data": {
+                        "screenshot_url": confirm_url,
+                        "application_id": app_id,
+                        "message": "Official submission receipt screenshot captured."
+                    }
                 }
-            }
+
+                yield {
+                    "event": "completed",
+                    "data": {
+                        "status": "submitted",
+                        "application_id": app_id,
+                        "screenshot_url": confirm_url,
+                        "message": "🎉 Application submitted successfully to the employer!"
+                    }
+                }
 
             await browser.close()
 

@@ -32,6 +32,7 @@ public class BackendAPIService: ObservableObject {
     public func streamJobApplication(
         jobURL: URL,
         userId: String?,
+        autoSubmit: Bool = false,
         onEvent: @escaping @MainActor (SSEEvent) -> Void
     ) async throws {
         let cleanBase = baseURL.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: "/"))
@@ -43,9 +44,12 @@ public class BackendAPIService: ObservableObject {
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("text/event-stream", forHTTPHeaderField: "Accept")
-        request.timeoutInterval = 120
+        request.timeoutInterval = 180
 
-        var payload: [String: Any] = ["job_url": jobURL.absoluteString]
+        var payload: [String: Any] = [
+            "job_url": jobURL.absoluteString,
+            "auto_submit": autoSubmit
+        ]
         if let uid = userId {
             payload["user_id"] = uid
         }

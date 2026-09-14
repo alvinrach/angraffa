@@ -59,11 +59,13 @@ public class ChatViewModel: ObservableObject {
         Task {
             let currentUser = await SupabaseService.shared.getCurrentUser()
             let userIdString = currentUser?.id.uuidString
+            let autoSubmit = UserDefaults.standard.bool(forKey: "jobagent_auto_submit")
 
             do {
                 try await BackendAPIService.shared.streamJobApplication(
                     jobURL: url,
-                    userId: userIdString
+                    userId: userIdString,
+                    autoSubmit: autoSubmit
                 ) { [weak self] sse in
                     guard let self = self else { return }
                     guard let idx = self.messages.firstIndex(where: { $0.id == processingMsgId }) else { return }
@@ -89,8 +91,13 @@ public class ChatViewModel: ObservableObject {
                         }
 
                     case "completed":
+                        let status = sse.data["status"] as? String ?? "success"
                         self.messages[idx].status = .completed
-                        self.messages[idx].text = "🎉 Application successfully auto-filled and prepared for:\n\(url.absoluteString)"
+                        if status == "submitted" {
+                            self.messages[idx].text = "🎉 Application submitted successfully to the employer!\n\(url.absoluteString)"
+                        } else {
+                            self.messages[idx].text = "📋 Application prepared & ready for review (Dry Run - Not Submitted):\n\(url.absoluteString)"
+                        }
                         if let urlStr = sse.data["screenshot_url"] as? String, let screenURL = URL(string: urlStr) {
                             self.messages[idx].screenshotURL = screenURL
                         }

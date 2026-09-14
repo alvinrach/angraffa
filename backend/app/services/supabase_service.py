@@ -1,4 +1,5 @@
 import os
+import uuid
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -66,23 +67,29 @@ class BackendSupabaseService:
         self,
         user_id: str,
         job_url: str,
+        user_email: Optional[str] = None,
         company_name: str = "SmartRecruiters",
         job_title: str = "Automated Application"
     ) -> str:
         """Create a new application tracking record in public.applications table."""
+        new_id = str(uuid.uuid4())
         try:
-            res = self.client.table("applications").insert({
+            payload = {
+                "id": new_id,
                 "user_id": user_id,
                 "job_url": job_url,
                 "company_name": company_name,
                 "job_title": job_title,
                 "status": "running"
-            }).execute()
+            }
+            if user_email:
+                payload["user_email"] = user_email
+            res = self.client.table("applications").insert(payload).execute()
             if res.data:
                 return str(res.data[0].get("id"))
         except Exception as e:
             print(f"⚠️ Application record insert warning: {e}")
-        return "temp-app-id"
+        return new_id
 
     def update_application_status(
         self,
