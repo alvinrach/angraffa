@@ -101,9 +101,9 @@ async def run_smartrecruiter_application(
             browser = await p.chromium.launch(
                 headless=False,
                 args=[
+                    "--headless=new",
                     "--disable-blink-features=AutomationControlled",
-                    "--no-sandbox",
-                    "--start-maximized"
+                    "--no-sandbox"
                 ]
             )
             context = await browser.new_context(

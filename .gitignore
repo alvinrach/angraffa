@@ -91,6 +91,11 @@ playwright/.cache/
 .pytest_cache/
 .coverage
 htmlcov/
+backend/data/
+*.png
+*.jpg
+*.jpeg
+
 
 # ==========================================
 # Android (Future)
