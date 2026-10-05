@@ -122,6 +122,16 @@ public class ProfileViewModel: ObservableObject {
             showStatus("Resume uploaded successfully!", isError: false)
 
             await saveProfile()
+
+            // Trigger one-time Markdown CV conversion via pymupdf4llm
+            showStatus("Converting CV to Markdown...", isError: false)
+            let currentUser = await SupabaseService.shared.getCurrentUser()
+            let convRes = try? await BackendAPIService.shared.convertCVToMarkdown(userId: currentUser?.id.uuidString)
+            if convRes?["status"] as? String == "success" {
+                showStatus("Resume uploaded & Markdown CV indexed!", isError: false)
+            } else {
+                showStatus("Resume uploaded successfully!", isError: false)
+            }
         } catch {
             showStatus("Upload failed: \(error.localizedDescription)", isError: true)
         }

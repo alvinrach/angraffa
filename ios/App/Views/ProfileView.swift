@@ -51,7 +51,7 @@ public struct ProfileView: View {
                                 .font(.body)
                                 .foregroundColor(viewModel.resumeFileName.isEmpty ? .secondary : .primary)
                             if !viewModel.resumeFileName.isEmpty {
-                                Text("Stored securely in your Supabase account")
+                                Text("Stored in Supabase & Markdown indexed for AI")
                                     .font(.caption)
                                     .foregroundColor(.green)
                             }

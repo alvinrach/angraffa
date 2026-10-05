@@ -83,4 +83,31 @@ public class BackendAPIService: ObservableObject {
             }
         }
     }
+
+    public func convertCVToMarkdown(userId: String?) async throws -> [String: Any] {
+        let cleanBase = baseURL.trimmingCharacters(in: .whitespacesAndNewlines).trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        guard let endpoint = URL(string: "\(cleanBase)/api/cv/convert-md") else {
+            throw URLError(.badURL)
+        }
+
+        var request = URLRequest(url: endpoint)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+
+        var payload: [String: Any] = [:]
+        if let uid = userId {
+            payload["user_id"] = uid
+        }
+        request.httpBody = try JSONSerialization.data(withJSONObject: payload)
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+        guard let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) else {
+            let status = (response as? HTTPURLResponse)?.statusCode ?? 0
+            throw NSError(domain: "BackendAPI", code: status, userInfo: [NSLocalizedDescriptionKey: "Conversion failed with status \(status)"])
+        }
+
+        let json = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
+        return json
+    }
 }
+
