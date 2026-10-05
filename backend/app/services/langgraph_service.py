@@ -63,9 +63,9 @@ def get_llm():
 
 
 def sanitize_html_for_llm(raw_html: str) -> str:
-    """Strip clutter (scripts, styles, SVGs) retaining interactive form elements."""
+    """Strip clutter (scripts, styles, SVGs) retaining interactive form elements, headers, and footers."""
     soup = BeautifulSoup(raw_html, "html.parser")
-    for tag in soup(["script", "style", "svg", "path", "noscript", "iframe", "header", "footer", "nav", "link", "meta"]):
+    for tag in soup(["script", "style", "svg", "path", "noscript", "iframe", "nav", "link", "meta"]):
         tag.decompose()
 
     # Find main form or body container
@@ -221,36 +221,45 @@ async def llm_generate_script_node(state: JobApplicationState) -> Dict[str, Any]
 
     llm = get_llm()
     system_prompt = """You are an expert Python Playwright automation engineer.
-Analyze the provided HTML form and write a complete, standalone Python function:
+Analyze the provided HTML form and write a complete, standalone Python function to automate it:x    
 
 ```python
 async def run(page, data: dict):
     # page: Playwright async Page object
-    # data: Dictionary containing all values to fill (e.g. data['first_name'], data['resume_path'], data['salary_expectation'])
+    # data: Dictionary containing all dynamic placeholder values (e.g. data['field_name'])
 ```
 
-RULES:
-1. DO NOT hardcode any personal names, emails, phones, or text answers.
-2. Access ALL form inputs, dropdowns, radio buttons, numbers, textareas, and resume file uploads from `data['variable_name']`.
-3. For file uploads, use:
-   `file_inputs = await page.locator('input[type="file"]').all()`
-   `if file_inputs and 'resume_path' in data: await file_inputs[-1].set_input_files(data['resume_path'])`
-4. For custom comboboxes/dropdowns, support keyboard navigation (click, wait, ArrowDown, Enter) or clicking option elements.
-5. If there is a privacy/terms checkbox, check it.
-6. If `data.get('auto_submit', False)` is True, click the submit button at the end. Otherwise, do NOT click submit.
-7. Return ONLY valid Python code wrapped in ```python ... ``` block.
+CORE GUIDELINES:
+1. Dynamic & Resilient Locators:
+   - Inspect the provided HTML to find the exact selectors for inputs, textareas, comboboxes, buttons, and file inputs.
+   - For text inputs, trigger change/blur/Tab so reactive form validators (Angular/React) update immediately.
+   - For phone fields with country dropdowns, select the country dial code before typing the local number.
 
-At the very end of your response, after the python code block, provide a JSON block listing all variable keys required by the script:
+2. Work Experience & Education List Automation:
+   - For dynamic card sections (Work Experience, Education): iterate over the corresponding data lists, click the "Add" button, populate the child inputs, and click the card's "Save" button (`button:has-text("Save")`, `spl-button:has-text("Save")`).
+   - Before advancing, click "Cancel" (`button:has-text("Cancel")`) on any unneeded/blank draft cards so no red validation errors remain.
+
+3. Resume Upload Timing:
+   - Upload the resume file (`input[type="file"]`) AFTER personal and experience details are filled (or at the bottom of the section) to prevent portal auto-parsers from interrupting input typing.
+
+4. Multi-Step Transition & Screening Questions:
+   - Click the Next/Continue button (`button[data-test="footer-next"]`, `button:has-text("Next")`, `spl-button:has-text("Next")`).
+   - Wait 2.5 seconds for Step 2 screening questions to render.
+   - Complete all Step 2 screening questions (radios, pitch textarea, comboboxes, and consent checkboxes).
+
+5. Submission:
+   - If `data.get('auto_submit', False)` is True, click the final submit button. Otherwise, leave the form ready for user review.
+
+OUTPUT FORMAT:
+Return the Python code in a ```python ... ``` block, followed by a JSON object in a ```json ... ``` block declaring whatever variable placeholders your script expects in `data`:
+```python
+async def run(page, data: dict):
+    # complete implementation
+```
 ```json
 {
   "variables": {
-    "first_name": "Applicant first name",
-    "last_name": "Applicant last name",
-    "email": "Applicant email address",
-    "phone": "Applicant phone number with country code",
-    "city": "Applicant current city",
-    "resume_path": "Absolute path to CV file",
-    ...
+    "placeholder_key": "Description of the value expected"
   }
 }
 ```
@@ -303,11 +312,18 @@ async def llm_fill_json_node(state: JobApplicationState) -> Dict[str, Any]:
     answers = profile.get("answers_json") or {}
 
     system_prompt = """You are an intelligent Career Data Extractor.
-Your job is to produce a JSON dictionary containing the exact values for each requested variable placeholder.
-Extract the most accurate information from the applicant's Markdown CV and Stored Profile Answers.
+Your job is to produce a JSON dictionary containing the values for each requested variable placeholder based on the applicant's Markdown CV (MdCV) and Profile data.
+
+Make sure:
+1. Phone & Dial Code:
+   - Separate the country dial code (e.g. `+971`, `+62`, `+1`) and the local phone number without dial code.
+2. Experiences List:
+   - Extract all career history entries as a list of dictionaries with standard keys: `title`, `company`, `location`, `start_date`, `end_date`, `description`.
+3. Educations List:
+   - Extract all degree entries as a list of dictionaries with standard keys: `institution`, `degree`, `field_of_study`, `start_date`, `end_date`.
 
 OUTPUT FORMAT:
-Return ONLY a valid JSON object matching the requested variable keys:
+Return ONLY a valid JSON object matching the requested variable schema:
 ```json
 {
   "key1": "value1",
@@ -321,16 +337,18 @@ REQUESTED VARIABLE KEYS & DESCRIPTIONS:
 {json.dumps(state.get('placeholder_schema', {}), indent=2)}
 
 APPLICANT PROFILE DATA:
-- First Name: {profile.get('first_name')}
-- Last Name: {profile.get('last_name')}
-- Email: {profile.get('email')}
-- Phone: {profile.get('phone_country_code', '')} {profile.get('phone_number', '')}
-- Location / City: {profile.get('city')}, {profile.get('country')}
-- LinkedIn: {profile.get('linkedin_url')}
+- First Name: {profile.get('first_name', '')}
+- Last Name: {profile.get('last_name', '')}
+- Email: {profile.get('email', '')}
+- Phone Country Code: {profile.get('phone_country_code', '')}
+- Phone Number: {profile.get('phone_number', '')}
+- City: {profile.get('city', '')}
+- Country: {profile.get('country', '')}
+- LinkedIn: {profile.get('linkedin_url', '')}
 - Stored Answers: {json.dumps(answers, indent=2)}
 
 APPLICANT MARKDOWN CV (MdCV):
-{state.get('md_cv', '')[:10000]}
+{state.get('md_cv', '')}
 """
 
     response = await llm.ainvoke([SystemMessage(content=system_prompt), HumanMessage(content=human_prompt)])
@@ -459,7 +477,7 @@ async def llm_fix_script_node(state: JobApplicationState) -> Dict[str, Any]:
     llm = get_llm()
     system_prompt = """You are an expert Playwright automation debugger.
 The previous script failed during execution. Analyze the error traceback, the failed script, and the sanitized HTML.
-Fix all invalid selectors, missing timeouts, or incorrect DOM interactions.
+Fix all invalid selectors, missing timeouts, or incorrect DOM interactions so the script executes reliably.
 
 OUTPUT FORMAT:
 Return ONLY the corrected Python function in a ```python ... ``` block.
